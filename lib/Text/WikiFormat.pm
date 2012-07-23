@@ -9,7 +9,7 @@ use Text::WikiFormat::Blocks;
 use Scalar::Util qw( blessed reftype );
 
 use vars qw( $VERSION %tags $indent );
-$VERSION = '0.79';
+$VERSION = '0.80';
 $indent  = qr/^(?:\t+|\s{4,})/;
 %tags    = (
 	indent		=> qr/^(?:\t+|\s{4,})/,
@@ -322,7 +322,7 @@ sub find_extended_links
 	my ($text, $tags, $opts) = @_;
 
     my $schemas = join('|', @{$tags->{schemas}});
-    $text =~ s!(\s+)(($schemas):\S+)!$1 . $tags->{link}->($2, $opts)!egi
+    $text =~ s!(^|\s+)(($schemas):\S+)!$1 . $tags->{link}->($2, $opts)!egi
 	    if $opts->{absolute_links};
 
 	my ($start, $end) = @{ $tags->{extended_link_delimiters} };
