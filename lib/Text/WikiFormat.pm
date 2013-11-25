@@ -9,7 +9,7 @@ use Text::WikiFormat::Blocks;
 use Scalar::Util qw( blessed reftype );
 
 use vars qw( $VERSION %tags $indent );
-$VERSION = '0.80';
+$VERSION = '0.81';
 $indent  = qr/^(?:\t+|\s{4,})/;
 %tags    = (
 	indent		=> qr/^(?:\t+|\s{4,})/,
@@ -122,7 +122,8 @@ sub format
 
 	$opts    ||=
 	{
-		prefix => '', extended => 0, implicit_links => 1, absolute_links => 0
+		prefix => '', extended => 0, implicit_links => 1, absolute_links => 0,
+		nofollow_extended => 0
 	};
 
 	my %tags   = %tags;
@@ -348,7 +349,10 @@ sub make_html_link
 	my $prefix               = ( defined $opts->{prefix} && $is_relative )
 		? $opts->{prefix} : '';
 
-	return qq|<a href="$prefix$link">$title</a>|;
+	my $nofollow             = (!$is_relative && $opts->{nofollow_extended})
+		? ' rel="nofollow"' : '';
+
+	return qq|<a href="$prefix$link"$nofollow>$title</a>|;
 }
 
 sub escape_link
@@ -456,6 +460,11 @@ earlier.
 
 The recognized schemas are those defined in the C<schema> value in the C<%tags>
 hash. The defaults are C<http>, C<https>, C<ftp>, C<mailto>, and C<gopher>.
+
+=item * nofollow_extended
+
+When used with the C<extended> flag, any extended links will be turned into HTML
+tags with the C<rel="nofollow"> attribute. By default, this option is off.
 
 =back
 
